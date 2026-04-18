@@ -46,16 +46,26 @@ function MapBoundsComponent({ addresses }) {
   return null;
 }
 
-const MapView = ({ addresses, routes }) => {
+const MapView = ({ startPoint, endPoint, addresses, routes }) => {
   const mapRef = useRef(null);
 
   // Default center (US)
   const defaultCenter = [39.8283, -98.5795];
+  
+  // Collect all points to render markers and bounds
+  const allPoints = [];
+  if (startPoint && startPoint.lat && startPoint.lng) {
+    allPoints.push({ ...startPoint, markerLabel: 'Start (Depot)' });
+  }
   const validAddresses = addresses?.filter(a => a.lat && a.lng) || [];
+  validAddresses.forEach((a, i) => allPoints.push({ ...a, markerLabel: `Stop ${i + 1}` }));
+  if (endPoint && endPoint.lat && endPoint.lng) {
+    allPoints.push({ ...endPoint, markerLabel: 'End Point' });
+  }
 
   return (
     <MapContainer 
-      center={validAddresses.length > 0 ? [validAddresses[0].lat, validAddresses[0].lng] : defaultCenter} 
+      center={allPoints.length > 0 ? [allPoints[0].lat, allPoints[0].lng] : defaultCenter} 
       zoom={4} 
       ref={mapRef}
       style={{ height: '100%', width: '100%' }}
@@ -65,17 +75,17 @@ const MapView = ({ addresses, routes }) => {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       
-      <MapBoundsComponent addresses={validAddresses} />
+      <MapBoundsComponent addresses={allPoints} />
 
-      {validAddresses.map((address, index) => (
+      {allPoints.map((address, index) => (
         <Marker 
-          key={address.id} 
+          key={address.id || `pt-${index}`} 
           position={[address.lat, address.lng]}
-          icon={index === 0 ? depotIcon : defaultIcon}
+          icon={address.id === 'start' || address.id === 'end' ? depotIcon : defaultIcon}
         >
           <Popup>
             <div>
-              <strong>{index === 0 ? 'Start (Depot)' : `Stop ${index}`}</strong>
+              <strong>{address.markerLabel}</strong>
               <br/>
               {address.rawText || address.address}
             </div>

@@ -13,7 +13,8 @@ const StepRoutes = ({ routes, onBack }) => {
         exportData.push({
           'Vehicle ID': route.vehicleId,
           'Stop Number': index === 0 ? 'Start' : index === route.stops.length - 1 ? 'End' : index,
-          'Address': stop.rawText || stop.address,
+          'Original Input': stop.rawText,
+          'Geocoded Location': stop.address,
           'Latitude': stop.lat,
           'Longitude': stop.lng
         });

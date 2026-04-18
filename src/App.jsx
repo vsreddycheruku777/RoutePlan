@@ -7,6 +7,8 @@ import StepRoutes from './components/StepRoutes';
 
 function App() {
   const [currentStep, setCurrentStep] = useState(1);
+  const [startPoint, setStartPoint] = useState(null);
+  const [endPoint, setEndPoint] = useState(null);
   const [addresses, setAddresses] = useState([]);
   const [goals, setGoals] = useState({
     maxVehicles: 1,
@@ -20,6 +22,8 @@ function App() {
       case 1:
         return (
           <StepAddresses 
+            startPoint={startPoint} setStartPoint={setStartPoint}
+            endPoint={endPoint} setEndPoint={setEndPoint}
             addresses={addresses} 
             setAddresses={setAddresses} 
             onNext={() => setCurrentStep(2)} 
@@ -33,6 +37,8 @@ function App() {
             onBack={() => setCurrentStep(1)} 
             onNext={() => setCurrentStep(3)} 
             addresses={addresses}
+            startPoint={startPoint}
+            endPoint={endPoint}
             setRoutes={setRoutes}
           />
         );
@@ -91,7 +97,7 @@ function App() {
 
       {/* Map Area */}
       <div className="map-container">
-        <MapView addresses={addresses} routes={routes} />
+        <MapView startPoint={startPoint} endPoint={endPoint} addresses={addresses} routes={routes} />
       </div>
     </div>
   );

@@ -3,8 +3,10 @@
 
 export const geocodeAddress = async (addressText) => {
   try {
+    // Append USA context dynamically if not present, and restrict to US to avoid matching random states
+    const query = encodeURIComponent(addressText);
     const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addressText)}&limit=1`,
+      `https://nominatim.openstreetmap.org/search?format=json&q=${query}&countrycodes=us&limit=1`,
       {
         headers: {
           // Nominatim requires a user agent

@@ -12,11 +12,12 @@ function getDistance(lat1, lon1, lat2, lon2) {
 }
 
 // Simple greedy algorithm for vehicle routing (CVRP/TSP)
-export const optimizeRoutes = async (addresses, goals) => {
-  if (!addresses || addresses.length < 2) return [];
+export const optimizeRoutes = async (addresses, goals, startPoint, endPoint) => {
+  if (!startPoint || addresses.length === 0) return [];
 
-  const depot = addresses[0];
-  let unassignedStops = addresses.slice(1);
+  const depot = startPoint;
+  const finalDestination = endPoint || startPoint; // Use endPoint if provided, otherwise round trip
+  let unassignedStops = [...addresses];
   const routes = [];
   
   // Create up to maxVehicles routes
@@ -27,7 +28,7 @@ export const optimizeRoutes = async (addresses, goals) => {
     let currentLocation = depot;
     
     // Greedily pick the closest stop until maxStopsPerVehicle is reached
-    while (unassignedStops.length > 0 && currentRouteStops.length <= goals.maxStopsPerVehicle) {
+    while (unassignedStops.length > 0 && (currentRouteStops.length - 1) < goals.maxStopsPerVehicle) {
       // Find nearest unassigned
       let nearestIdx = 0;
       let minDistance = Infinity;
@@ -50,8 +51,8 @@ export const optimizeRoutes = async (addresses, goals) => {
       unassignedStops.splice(nearestIdx, 1);
     }
     
-    // Add depot at the end to complete round trip
-    currentRouteStops.push(depot);
+    // Add final destination at the end
+    currentRouteStops.push(finalDestination);
     
     routes.push({
       vehicleId: v + 1,

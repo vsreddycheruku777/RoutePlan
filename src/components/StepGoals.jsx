@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Settings, Users, Clock, Map, Route as RouteIcon } from 'lucide-react';
 import { optimizeRoutes } from '../utils/routing';
 
-const StepGoals = ({ goals, setGoals, onBack, onNext, addresses, setRoutes }) => {
+const StepGoals = ({ goals, setGoals, onBack, onNext, addresses, startPoint, endPoint, setRoutes }) => {
   const [isOptimizing, setIsOptimizing] = useState(false);
 
   const handleOptimize = async () => {
@@ -12,7 +12,7 @@ const StepGoals = ({ goals, setGoals, onBack, onNext, addresses, setRoutes }) =>
     const validAddresses = addresses.filter(a => a.lat && a.lng);
     
     // Call our routing utility
-    const computedRoutes = await optimizeRoutes(validAddresses, goals);
+    const computedRoutes = await optimizeRoutes(validAddresses, goals, startPoint, endPoint);
     
     setRoutes(computedRoutes);
     setIsOptimizing(false);
